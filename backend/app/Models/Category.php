@@ -9,29 +9,31 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    // Ép kiểu dữ liệu khi đọc từ CSDL
+    protected $fillable = ['parent_id', 'name', 'slug', 'description', 'image', 'sort_order', 'status'];
+
+    // Ép kiểu dữ liệu khi đọc từ CSDL.
     protected function casts(): array
     {
         return [
-            'parent_id'  => 'integer',
+            'parent_id' => 'integer',
             'sort_order' => 'integer',
-            'status'     => 'integer',
+            'status' => 'integer',
         ];
     }
 
-    // Quan hệ: danh mục con thuộc về một danh mục cha
+    // Lấy danh mục cha theo parent_id.
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id');
     }
 
-    // Quan hệ: một danh mục có nhiều danh mục con
+    // Lấy các danh mục con trỏ tới danh mục hiện tại.
     public function children(): HasMany
     {
         return $this->hasMany(Category::class, 'parent_id');
     }
 
-    // Scope: Category::active() -> lọc status = 1
+    // Lọc danh mục có status = 1.
     public function scopeActive(Builder $query): void
     {
         $query->where('status', 1);
