@@ -10,26 +10,28 @@ use Illuminate\Support\Facades\Schema;
 
 class CategoryController extends Controller
 {
-    // Lấy danh mục công khai và sắp xếp cả hai cấp theo cấu hình nếu có.
+    // Phân trang toàn bộ danh mục công khai, gồm cả danh mục cha và con.
     public function index(): AnonymousResourceCollection
     {
-        $hasSortOrder = Schema::hasColumn('categories', 'sort_order');
-        $order = fn ($query) => $query
-            ->when($hasSortOrder, fn ($query) => $query->orderBy('sort_order'))
-            ->orderBy('id');
-
-        $categories = $order(Category::active()->whereNull('parent_id'))
-            ->with(['children' => fn ($query) => $order($query->active())])
-            ->get();
+        $categories = Category::active()
+            ->when(Schema::hasColumn('categories', 'sort_order'), fn ($query) => $query->orderBy('sort_order'))
+            ->orderBy('id')
+            ->paginate(12);
 
         return CategoryResource::collection($categories);
     }
 
-    // Trả danh mục đang hiển thị theo slug, hoặc HTTP 404.
+    // Tra danh mục công khai theo slug.
     public function show(string $slug): CategoryResource
     {
         $category = Category::active()->where('slug', $slug)->firstOrFail();
 
         return new CategoryResource($category);
+    }
+
+    // Tra danh mục công khai bằng khóa chính.
+    public function showById(string $id): CategoryResource
+    {
+        return new CategoryResource(Category::active()->findOrFail($id));
     }
 }

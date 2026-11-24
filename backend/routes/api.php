@@ -12,6 +12,11 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories/id/{id}', [CategoryController::class, 'showById'])->whereNumber('id');
 Route::get('/categories/{slug}', [CategoryController::class, 'show']);
+
 Route::get('/brands', [BrandController::class, 'index']);
+
 Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/id/{id}', [ProductController::class, 'showById'])->whereNumber('id');
+Route::get('/products/{slug}', [ProductController::class, 'show']);
