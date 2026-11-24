@@ -9,13 +9,15 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CategoryController extends Controller
 {
-    // GET /api/categories
+    // Lấy danh mục gốc và danh mục con đang hiển thị theo sort_order.
     public function index(): AnonymousResourceCollection
     {
-        $categories = Category::active()        // (1) scope của Model
-            ->whereNull('parent_id')            // (2) danh mục gốc
-            ->with(['children' => fn ($q) => $q->active()])  // (1)
-            ->get();                            // trả về tập Model
+        $categories = Category::active()
+            ->whereNull('parent_id')
+            ->with(['children' => fn ($query) => $query->active()->orderBy('sort_order')->orderBy('id')])
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
 
         return CategoryResource::collection($categories);
     }
