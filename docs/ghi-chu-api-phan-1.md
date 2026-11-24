@@ -15,7 +15,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Với cơ sở dữ liệu mới dành cho bài thực hành, chạy `php artisan config:clear`, `php artisan migrate` và `php artisan db:seed --class=CategorySeeder`. Chạy `php artisan route:list --path=api` để xem route và `php artisan serve` để mở API tại `http://localhost:8000`. Các migration phục vụ bảng của API Phần 1. Nếu đã import CSDL của lớp, dùng dữ liệu có sẵn và đối chiếu các cột trước khi chạy migration nghiệp vụ.
+Với cơ sở dữ liệu mới dành cho bài thực hành, chạy `php artisan config:clear`, `php artisan migrate` và `php artisan db:seed --class=ApiPracticeSeeder`. Chạy `php artisan route:list --path=api` để xem route và `php artisan serve` để mở API tại `http://localhost:8000`. Các migration phục vụ bảng của API Phần 1. Nếu đã import CSDL của lớp, dùng dữ liệu có sẵn và đối chiếu các cột trước khi chạy migration nghiệp vụ.
 
 ## Danh sách danh mục
 
@@ -49,3 +49,17 @@ Gọi `GET /api/categories/phu-kien` để kiểm tra HTTP 200. Dùng slug `khon
 | `BrandSeeder::run()` | Tạo hai thương hiệu công khai và một thương hiệu ẩn. |
 
 Chạy `php artisan migrate` và `php artisan db:seed --class=BrandSeeder`. Gọi `GET /api/brands` để kiểm tra HTTP 200, thứ tự Anker rồi Samsung và việc loại thương hiệu ẩn.
+
+## Bài 3 Danh sách sản phẩm
+
+| Hàm | Tác dụng |
+| --- | --- |
+| `Product::casts()` | Đọc giá tiền dưới dạng chuỗi thập phân có hai chữ số. |
+| `Product::scopeActive()` | Thêm điều kiện `status = 1` vào truy vấn sản phẩm. |
+| `ProductController::index()` | Lấy sản phẩm đang hiển thị theo ID giảm dần và phân trang 12 mục. |
+| `ProductResource::toArray()` | Xuất `id`, `name`, `slug` và `price`. Laravel thêm `links` và `meta` ở cấp ngoài. |
+| Migration `up()` / `down()` | Tạo / hoàn tác bảng sản phẩm và hai khóa ngoại. |
+| `ProductSeeder::run()` | Tạo 15 sản phẩm công khai và một sản phẩm ẩn. |
+| `ApiPracticeSeeder::run()` | Gọi ba seeder theo thứ tự danh mục, thương hiệu, sản phẩm. |
+
+Gọi `GET /api/products` và `GET /api/products?page=2`. Trên CSDL mới với dữ liệu mẫu, trang 1 có 12 mục, trang 2 có 3 mục và `meta.total` bằng 15.
