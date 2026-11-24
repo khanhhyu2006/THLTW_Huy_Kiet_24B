@@ -21,4 +21,12 @@ class CategoryController extends Controller
 
         return CategoryResource::collection($categories);
     }
+
+    // Trả danh mục đang hiển thị theo slug, hoặc HTTP 404.
+    public function show(string $slug): CategoryResource
+    {
+        $category = Category::active()->where('slug', $slug)->firstOrFail();
+
+        return new CategoryResource($category);
+    }
 }

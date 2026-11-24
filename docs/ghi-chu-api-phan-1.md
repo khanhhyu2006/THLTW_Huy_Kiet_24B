@@ -31,3 +31,9 @@ Với cơ sở dữ liệu mới dành cho bài thực hành, chạy `php artisa
 | `CategorySeeder::run()` | Thêm danh mục mẫu đang hiển thị và danh mục ẩn theo slug để chạy lại seeder an toàn. |
 
 Gửi `GET /api/categories` với header `Accept: application/json`. Mong đợi HTTP 200 và danh sách trong khóa `data`. API chỉ đọc nên bỏ qua bước FormRequest.
+
+## Bài 1 Chi tiết danh mục
+
+`CategoryController::show(string $slug)` tìm danh mục đang hiển thị theo slug rồi giao dữ liệu cho `CategoryResource`. `firstOrFail()` trả HTTP 404 khi slug không tồn tại hoặc danh mục đang ẩn.
+
+Gọi `GET /api/categories/phu-kien` để kiểm tra HTTP 200. Dùng slug `khong-co-that` và `danh-muc-an` để kiểm tra HTTP 404.
