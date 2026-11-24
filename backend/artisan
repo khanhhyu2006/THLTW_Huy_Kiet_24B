@@ -6,6 +6,18 @@ use Symfony\Component\Console\Input\ArgvInput;
 
 define('LARAVEL_START', microtime(true));
 
+// On Windows, Artisan's reload process preserves PATH and SYSTEMROOT by exact key.
+if (PHP_OS_FAMILY === 'Windows' && in_array('serve', $argv, true)) {
+    foreach ($_ENV as $key => $value) {
+        $name = strtoupper($key);
+
+        if ($key !== $name && in_array($name, ['PATH', 'SYSTEMROOT'], true)) {
+            unset($_ENV[$key]);
+            $_ENV[$name] = $value;
+        }
+    }
+}
+
 // Register the Composer autoloader...
 require __DIR__.'/vendor/autoload.php';
 
